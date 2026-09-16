@@ -7,8 +7,6 @@ venv/
 .venv/
 
 # Data & models (large / regenerable — keep out of git unless you want them tracked)
-data/raw/*.csv
-data/processed/*.csv
 models/*.pkl
 models/*.joblib
 
