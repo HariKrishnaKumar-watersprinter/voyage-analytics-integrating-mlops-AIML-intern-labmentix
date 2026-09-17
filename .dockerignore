@@ -1,0 +1,26 @@
+# Version control
+.git/
+.gitignore
+
+# Notebooks & large data — not needed inside the API container
+notebooks/
+data/raw/
+data/processed/
+reports/
+
+# Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+venv/
+.venv/
+*.egg-info/
+
+# Not needed by this container
+k8s/
+tests/
+src/
+.env
+.env.example
+README.md
+setup_project.sh

@@ -1,0 +1,48 @@
+{
+  "model_name": "Random Forest",
+  "model_type": "RandomForestRegressor",
+  "trained_on": "2026-09-17",
+  "feature_columns": [
+    "time",
+    "distance",
+    "day_of_week",
+    "is_weekend",
+    "month_num",
+    "quarter",
+    "from_Brasilia (DF)",
+    "from_Campo Grande (MS)",
+    "from_Florianopolis (SC)",
+    "from_Natal (RN)",
+    "from_Recife (PE)",
+    "from_Rio de Janeiro (RJ)",
+    "from_Salvador (BH)",
+    "from_Sao Paulo (SP)",
+    "to_Brasilia (DF)",
+    "to_Campo Grande (MS)",
+    "to_Florianopolis (SC)",
+    "to_Natal (RN)",
+    "to_Recife (PE)",
+    "to_Rio de Janeiro (RJ)",
+    "to_Salvador (BH)",
+    "to_Sao Paulo (SP)",
+    "flightType_firstClass",
+    "flightType_premium",
+    "agency_FlyingDrops",
+    "agency_Rainbow"
+  ],
+  "categorical_columns_encoded": [
+    "from",
+    "to",
+    "flightType",
+    "agency"
+  ],
+  "target": "price",
+  "test_metrics": {
+    "rmse": 2.5275232206270615,
+    "mae": 0.26113616860735994,
+    "r2": 0.9999514929857304
+  },
+  "cv_rmse_mean": 2.419879281930867,
+  "cv_rmse_std": 0.44745998233977524,
+  "notes": "Trained on flights.csv. flightType_economic is the dropped baseline category from one-hot encoding (drop_first=True); absence of both flightType_firstClass and flightType_premium columns implies economic."
+}

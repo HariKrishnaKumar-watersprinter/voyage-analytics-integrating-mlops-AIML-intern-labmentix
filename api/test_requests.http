@@ -1,0 +1,71 @@
+### Health check
+GET http://localhost:5000/health
+
+### Valid prediction — firstClass
+POST http://localhost:5000/predict
+Content-Type: application/json
+
+{
+  "from": "Recife (PE)",
+  "to": "Florianopolis (SC)",
+  "flightType": "firstClass",
+  "agency": "FlyingDrops",
+  "date": "09/26/2026"
+}
+
+### Valid prediction — economic
+POST http://localhost:5000/predict
+Content-Type: application/json
+
+{
+  "from": "Recife (PE)",
+  "to": "Florianopolis (SC)",
+  "flightType": "economic",
+  "agency": "CloudFy",
+  "date": "09/26/2026"
+}
+
+### Invalid — missing fields
+POST http://localhost:5000/predict
+Content-Type: application/json
+
+{
+  "from": "Recife (PE)",
+  "to": "Florianopolis (SC)"
+}
+
+### Invalid — unknown city
+POST http://localhost:5000/predict
+Content-Type: application/json
+
+{
+  "from": "Atlantis",
+  "to": "Florianopolis (SC)",
+  "flightType": "economic",
+  "agency": "CloudFy",
+  "date": "09/26/2026"
+}
+
+### Invalid — same from/to
+POST http://localhost:5000/predict
+Content-Type: application/json
+
+{
+  "from": "Recife (PE)",
+  "to": "Recife (PE)",
+  "flightType": "economic",
+  "agency": "CloudFy",
+  "date": "09/26/2026"
+}
+
+### Invalid — bad date format
+POST http://localhost:5000/predict
+Content-Type: application/json
+
+{
+  "from": "Recife (PE)",
+  "to": "Florianopolis (SC)",
+  "flightType": "economic",
+  "agency": "CloudFy",
+  "date": "2026-09-26"
+}
