@@ -1,0 +1,60 @@
+# Voyage Analytics — Flight Price API (objective 4)
+#
+# Deploys 3 replicas of the same Docker image you built and tested locally
+# (voyage-flight-price-api:latest). Docker Desktop's built-in Kubernetes
+# shares the same image cache as `docker build`, so no registry push is
+# needed for local testing — but that's why imagePullPolicy is set to
+# IfNotPresent below (the default, "Always", would try to pull from a
+# registry and fail, since this image only exists locally).
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flight-price-api
+  labels:
+    app: flight-price-api
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: flight-price-api
+  template:
+    metadata:
+      labels:
+        app: flight-price-api
+    spec:
+      containers:
+        - name: flight-price-api
+          image: voyage-flight-price-api:latest
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 5000
+          resources:
+            requests:
+              cpu: "500m"
+              memory: "512Mi"
+            limits:
+              cpu: "1"
+              memory: "1Gi"
+          # Kubernetes hits /health (the same endpoint objective 2 built)
+          # to decide if a pod is alive and ready to receive traffic.
+          # Longer delays + timeouts than a first attempt would guess —
+          # loading the ~28MB Random Forest model from disk on a freshly
+          # started container isn't instant, and a 1s probe timeout was
+          # too aggressive and caused false-positive restarts.
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 20
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 15
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3

@@ -1,0 +1,17 @@
+# Exposes the flight-price-api Deployment as a single stable network endpoint.
+# type: LoadBalancer works out of the box with Docker Desktop's local
+# Kubernetes — it auto-maps to http://localhost:<port> with no extra setup,
+# which is the simplest option for local testing.
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: flight-price-api-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: flight-price-api
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
