@@ -2,9 +2,10 @@ from datetime import datetime
 import pandas as pd
 import os 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow.providers.standard.operators.python import PythonOperator,PythonVirtualenvOperator 
 from src.etl import preprocess_data
-#from airflow.utils.dates import days_ago
+from src.TravelRecommendation.travelrecom import log_model_to_mlflow
+#from airflow.hooks.base import BaseHook
 # ---------------------------------------------------------
 # DAG Definition
 # ---------------------------------------------------------
@@ -19,9 +20,20 @@ with DAG(
 
     etl_task = PythonOperator(
         task_id="etl_task",          # You must explicitly provide a task_id
-        python_callable=preprocess_data  # Point to the function you want to run
+        python_callable=preprocess_data,  # Point to the function you want to run
+        
     )
-
+    
+    def train_and_log_model():
+        # Your existing log_model_to_mlflow function       
+        from src.TravelRecommendation.travelrecom import log_model_to_mlflow
+        log_model_to_mlflow()
+    
+    Travel_recom_task = PythonVirtualenvOperator (
+        task_id="Travel_recom_task",          # You must explicitly provide a task_id
+        python_callable=train_and_log_model)
+        
+    
 
     
-    etl_task 
+    etl_task >> Travel_recom_task 
