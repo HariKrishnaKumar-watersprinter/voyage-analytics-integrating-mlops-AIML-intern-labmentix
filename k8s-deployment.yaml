@@ -1,0 +1,94 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flask-backend
+  labels:
+    app: flask-backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: flask-backend
+  template:
+    metadata:
+      labels:
+        app: flask-backend
+    spec:
+      containers:
+      - name: flask-backend
+        # Replace with your actual Docker image name/tag
+        image: your-docker-repo/flight-app:latest
+        imagePullPolicy: IfNotPresent
+        command: ["python", "-m", "src.flightpriceprediction.app"]
+        ports:
+        - containerPort: 5000
+        env:
+        - name: FLASK_ENV
+          value: "development"
+        - name: PYTHONUNBUFFERED
+          value: "1"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: flask-backend
+spec:
+  selector:
+    app: flask-backend
+  ports:
+    - protocol: TCP
+      port: 5000
+      targetPort: 5000
+  type: ClusterIP
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: streamlit-frontend
+  labels:
+    app: streamlit-frontend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: streamlit-frontend
+  template:
+    metadata:
+      labels:
+        app: streamlit-frontend
+    spec:
+      # Init container to mimic docker-compose 'depends_on'
+      # It waits until the Flask service is up and accepting connections
+      initContainers:
+      - name: wait-for-flask
+        image: busybox:1.28
+        command: ['sh', '-c', 'until nc -z flask-backend 5000; do echo waiting for flask; sleep 2; done;']
+      containers:
+      - name: streamlit-frontend
+        # Replace with your actual Docker image name/tag
+        image: your-docker-repo/flight-app:latest
+        imagePullPolicy: IfNotPresent
+        command: ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+        ports:
+        - containerPort: 8501
+        env:
+        - name: FLASK_API_URL
+          value: "http://flask-backend:5000"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: streamlit-frontend
+spec:
+  selector:
+    app: streamlit-frontend
+  ports:
+    - protocol: TCP
+      port: 8501
+      targetPort: 8501
+  # Use NodePort or LoadBalancer if you want to access this outside the cluster
+  type: LoadBalancer 

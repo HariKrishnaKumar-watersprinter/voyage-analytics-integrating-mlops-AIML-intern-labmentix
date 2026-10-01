@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  # Container 1: Flask API Backend
+  flask_backend:
+    build: .
+    command: python -m src.flightpriceprediction.app
+    ports:
+      - "5000:5000"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
+      - PYTHONUNBUFFERED=1
+
+  # Container 2: Streamlit Frontend
+  streamlit_frontend:
+    build: .
+    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+    ports:
+      - "8501:8501"
+    volumes:
+      - .:/app
+    depends_on:
+      - flask_backend
+    environment:
+      - FLASK_API_URL=http://flask_backend:5000
