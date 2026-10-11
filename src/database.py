@@ -1,10 +1,12 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 import os
-from config import settings
+#from config import settings
+from dotenv import load_dotenv
+load_dotenv()
 
 # For MySQL, set DATABASE_URL to e.g. mysql+pymysql://user:pass@localhost:3306/aivoa_complaints
-engine = create_engine(settings.database_url, pool_pre_ping=True,connect_args={"sslmode": "require"})
+engine = create_engine(os.getenv("DATABASE_URL"), pool_pre_ping=True,connect_args={"sslmode": "require"})
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

@@ -18,7 +18,7 @@ spec:
       containers:
       - name: flask-backend
         # Replace with your actual Docker image name/tag
-        image: your-docker-repo/flight-app:latest
+        image: voyageanalytics-flask_backend:latest 
         imagePullPolicy: IfNotPresent
         command: ["python", "-m", "src.flightpriceprediction.app"]
         ports:
@@ -28,7 +28,9 @@ spec:
           value: "development"
         - name: PYTHONUNBUFFERED
           value: "1"
-
+        envFrom:
+          - secretRef:
+              name: app-secrets
 ---
 apiVersion: v1
 kind: Service
@@ -69,14 +71,17 @@ spec:
       containers:
       - name: streamlit-frontend
         # Replace with your actual Docker image name/tag
-        image: your-docker-repo/flight-app:latest
+        image: voyageanalytics-streamlit_frontend:latest
         imagePullPolicy: IfNotPresent
-        command: ["streamlit", "run", "streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
+        command: ["streamlit", "run", "streamlit/streamlit_app.py", "--server.port=8501", "--server.address=0.0.0.0"]
         ports:
         - containerPort: 8501
         env:
         - name: FLASK_API_URL
           value: "http://flask-backend:5000"
+        envFrom:
+          - secretRef:
+              name: app-secrets
 
 ---
 apiVersion: v1

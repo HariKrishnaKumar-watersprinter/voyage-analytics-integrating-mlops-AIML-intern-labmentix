@@ -17,5 +17,7 @@ RUN apt-get update && apt-get install -y \
 ## Copying ur all contents from local to app
 COPY . .
 
+EXPOSE 5000 8501
+
 RUN pip install --no-cache-dir -r requirements.txt
 

@@ -42,5 +42,11 @@ with DAG(
     flight_price_task = PythonVirtualenvOperator (
         task_id="flight_price_task",          # You must explicitly provide a task_id
         python_callable=train_flight_price_model)
-    
-    etl_task>>Travel_recom_task>>flight_price_task
+    def train_gender_Classification_model():
+        # Your existing log_model_to_mlflow function       
+        from src.gender_Classification_model.gen_train import mlflow_track
+        mlflow_track()
+    Gender_Classification_task = PythonVirtualenvOperator (
+        task_id="Gender_Classification_task",          # You must explicitly provide a task_id
+        python_callable=train_gender_Classification_model)
+    etl_task>>Travel_recom_task>>flight_price_task>>Gender_Classification_task

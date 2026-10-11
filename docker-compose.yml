@@ -3,7 +3,9 @@ version: '3.8'
 services:
   # Container 1: Flask API Backend
   flask_backend:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile.web   # <-- Points to the new web Dockerfile
     command: python -m src.flightpriceprediction.app
     ports:
       - "5000:5000"
@@ -15,8 +17,10 @@ services:
 
   # Container 2: Streamlit Frontend
   streamlit_frontend:
-    build: .
-    command: streamlit run streamlit_app.py --server.port=8501 --server.address=0.0.0.0
+    build:
+      context: .
+      dockerfile: Dockerfile.web   # <-- Points to the new web Dockerfile
+    command: streamlit run streamlit/streamlit_app.py --server.port=8501 --server.address=0.0.0.0
     ports:
       - "8501:8501"
     volumes:

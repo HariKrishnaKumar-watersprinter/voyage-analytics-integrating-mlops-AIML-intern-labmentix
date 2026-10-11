@@ -75,21 +75,19 @@ def get_underlying_model(pyfunc_model):
     raise AttributeError("Could not extract the underlying Python model")
 
 
-def stramlit_trav_recomm():
+def stramlit_trav_recomm(model,travel_rec):
     # Retrieve the unwrapped model directly from session state
-    if "unwrapped_rec_model" not in st.session_state:
-        st.error("Model is not loaded. Please restart the application.")
-        return
+   
         
-    rec = st.session_state.unwrapped_rec_model
-    hotel = travel_rec()
+    rec = get_underlying_model(model)
+    hotel = travel_rec
 
     options = {
         "places": list(hotel["place"].unique()),
         "hotel_price_per_day_range": (0, float(hotel["price"].max())),
     }
     
-    st.title("🏨 Travel Recommendations")
+    st.title("🏨 Hotel Recommendations")
     c1, c2 = st.columns(2)
     place = c1.selectbox("Destination", ["(any)"] + options["places"])
     lo, hi = options["hotel_price_per_day_range"]
@@ -109,28 +107,11 @@ def stramlit_trav_recomm():
     else:
         st.dataframe(df[["name", "place", "bookings", "avg_days",
                          "avg_price_per_day", "avg_total", "score", "visited_before"]],
-                     width='content')
+                     width='stretch')
         st.bar_chart(df.set_index("name")["score"])
 
 
 # ---- Streamlit App Entry Point ----
 if __name__ == "__main__":
-    # 1. Initialize the model in session state ONLY ONCE
-    if "unwrapped_rec_model" not in st.session_state:
-        with st.spinner("Loading MLflow model... This might take a minute on the first run."):
-            pyfunc_model = load_model_for_inference(model_name="cosine_similarity_model")
-            
-            if pyfunc_model is None:
-                st.error("Failed to load model. Exiting.")
-                st.stop() # Stops the Streamlit app execution elegantly
-                
-            try:
-                # Unwrap and save to session state
-                st.session_state.unwrapped_rec_model = get_underlying_model(pyfunc_model)
-                st.success("Model loaded and cached successfully!")
-            except Exception as e:
-                st.error(f"Failed to unwrap model: {e}")
-                st.stop()
-
-    # 2. Run the Streamlit UI (uses the cached model on subsequent slider changes)
+    
     stramlit_trav_recomm()
