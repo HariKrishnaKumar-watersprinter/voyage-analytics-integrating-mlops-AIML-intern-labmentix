@@ -30,7 +30,7 @@ def preprocess_data():
     print("Preprocessing data...")
     # --- 1. DATA CLEANING ---
     # flight dataset
-    path="https://drive.google.com/file/d/15YcZLQpGbuGV7VcNwbOaDtmRnzt8i6mN/view?usp=sharing"
+    path = "https://drive.google.com/file/d/15YcZLQpGbuGV7VcNwbOaDtmRnzt8i6mN/view?usp=sharing"
     memory_buffer = download_to_memory(path)
     df_raw = pd.read_csv(memory_buffer)
     memory_buffer.close()
@@ -50,7 +50,7 @@ def preprocess_data():
         print(f"Error loading flight dataset: {e}")
     
     #hotel.csv dataset 
-    path="https://drive.google.com/file/d/1rAnqFGB0C8gqYZW_bhNyhitXXz7Ro73q/view?usp=sharing"
+    path = "https://drive.google.com/file/d/1rAnqFGB0C8gqYZW_bhNyhitXXz7Ro73q/view?usp=sharing"
     memory_buffer = download_to_memory(path)
     df_raw = pd.read_csv(memory_buffer)
     memory_buffer.close()
@@ -72,7 +72,7 @@ def preprocess_data():
     
     
     #user.csv
-    path="https://drive.google.com/file/d/1DLsL8y9Uct2UlNaBmjfO051cs5Tx8Dwh/view?usp=sharing"
+    path = "https://drive.google.com/file/d/1DLsL8y9Uct2UlNaBmjfO051cs5Tx8Dwh/view?usp=sharing"
     memory_buffer = download_to_memory(path)
     df_raw = pd.read_csv(memory_buffer)
     memory_buffer.close()
